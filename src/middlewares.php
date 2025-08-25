@@ -8,7 +8,7 @@ $middleware_mapping = [
     },
     'guest' => function () {
         if(isset($_SESSION['user_id'])){
-            header("Location: /");
+            header("Location: /dashboard");
             exit();
         }
     }

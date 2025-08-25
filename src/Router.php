@@ -90,11 +90,13 @@ class Router {
                 throw new Exception("Resource not found.");
             }
 
+            $Request = new Request();
+
             if(is_callable($handler)){
-                call_user_func($handler);
+                call_user_func($handler, $Request);
             } else {
                 $class_name = new $handler;
-                call_user_func([$class_name, $class_method]);
+                call_user_func([$class_name, $class_method], $Request);
             }
         } else {
             echo "Resource not found.";

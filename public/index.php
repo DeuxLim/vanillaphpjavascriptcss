@@ -4,7 +4,10 @@
 require __DIR__ . "/../src/config.php";
 require __DIR__ . "/../src/autoload.php";
 
-session_start();
+// Check if session is already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Initialize Router
 $router = new App\Router();
