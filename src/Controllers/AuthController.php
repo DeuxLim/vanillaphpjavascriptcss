@@ -134,9 +134,8 @@ class AuthController
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             $_SESSION['form_data'] = $_POST;
-            d($_SESSION['errors']);
-            //header("Location: /register");
-            //exit();
+            header("Location: /register");
+            exit();
         }
     }
 
@@ -189,10 +188,10 @@ class AuthController
                     $_SESSION['user_id'] = $user['id'];
                     header("Location: /dashboard");
                 } else {
-                    $errors['user'] = "Email or Password is invalid.";
+                    $errors['user'] = "Invalid email or password.";
                 }
             } else {
-                $errors['user'] = "Email or Password is invalid.";
+                $errors['user'] = "Invalid email or password.";
             }
         }
 
@@ -200,9 +199,8 @@ class AuthController
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             $_SESSION['form_data'] = $_POST;
-            d($errors);
-            //header("Location: /login");
-            //exit();
+            header("Location: /login");
+            exit();
         }
     }
 

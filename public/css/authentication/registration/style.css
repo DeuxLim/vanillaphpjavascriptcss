@@ -123,6 +123,12 @@ body {
     transform: translateY(0);
 }
 
+.error-message{
+    color: red;
+    display: flex;
+    justify-content: flex-end;
+}
+
 /* Form footer */
 .form-footer {
     text-align: center;

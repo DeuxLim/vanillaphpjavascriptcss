@@ -15,14 +15,38 @@
             </div>
             
             <form action="/login" method="POST" class="login-form">
+                <!-- Error Placeholder -->
+                <?php if (isset($_SESSION['errors']['user'])): ?>
+                    <div class="error-message">
+                        <?= htmlspecialchars($_SESSION['errors']['user']) ?>
+                    </div>
+                    <?php unset($_SESSION['errors']['user']); ?>
+                <?php endif; ?>
+
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" required />
+                    <input type="email" id="email" name="email" required value="<?= htmlspecialchars($_SESSION['form_data']['email'] ?? '') ?>"/>
+
+                    <!-- Error Placeholder -->
+                    <?php if (isset($_SESSION['errors']['email'])): ?>
+                        <div class="error-message">
+                            <?= htmlspecialchars($_SESSION['errors']['email']) ?>
+                        </div>
+                        <?php unset($_SESSION['errors']['email']); ?>
+                    <?php endif; ?>
                 </div>
 
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required />
+                    <input type="password" id="password" name="password" required value="<?= htmlspecialchars($_SESSION['form_data']['password'] ?? '') ?>"/>
+
+                    <!-- Error Placeholder -->
+                    <?php if (isset($_SESSION['errors']['password'])): ?>
+                        <div class="error-message">
+                            <?= htmlspecialchars($_SESSION['errors']['password']) ?>
+                        </div>
+                        <?php unset($_SESSION['errors']['password']); ?>
+                    <?php endif; ?>
                 </div>
 
                 <div class="form-options">
@@ -41,6 +65,8 @@
                 <div class="form-footer">
                     <p>Don't have an account? <a href="/register">Create one here</a></p>
                 </div>
+
+                <?php unset($_SESSION['form_data']); ?>
             </form>
         </div>
     </div>

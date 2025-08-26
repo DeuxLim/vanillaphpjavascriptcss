@@ -253,6 +253,12 @@ body {
     display: block;
 }
 
+.error-message{
+    color: red;
+    display: flex;
+    justify-content: flex-end;
+}
+
 /* Forgot password link */
 .forgot-link {
     color: #667eea;
