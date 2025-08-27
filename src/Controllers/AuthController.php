@@ -186,6 +186,7 @@ class AuthController
                 // check if password matches
                 if (password_verify($requestData['password'], $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['user_data'] = $user;
                     header("Location: /dashboard");
                 } else {
                     $errors['user'] = "Invalid email or password.";

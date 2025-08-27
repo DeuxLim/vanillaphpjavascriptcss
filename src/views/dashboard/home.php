@@ -12,7 +12,7 @@
         <div class="header-content">
             <h1 class="logo">Todo App</h1>
             <div class="user-menu">
-                <span class="welcome-text">Welcome, John!</span>
+                <span class="welcome-text">Welcome, <?= htmlspecialchars($_SESSION['user_data']['first_name'])?>!</span>
                 <form method="POST" action="/logout" style="display: inline;">
                     <button type="submit" class="logout-btn">Logout</button>
                 </form>
