@@ -181,12 +181,10 @@ class AuthController
             $user = $query->fetch(PDO::FETCH_ASSOC);
 
             if ($user) {
-                d($user);
-
                 // check if password matches
                 if (password_verify($requestData['password'], $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['user_data'] = $user;
+                    $_SESSION['user_name'] = $user;
                     header("Location: /dashboard");
                 } else {
                     $errors['user'] = "Invalid email or password.";

@@ -35,8 +35,8 @@ class Request {
             $this->cookie,
             $this->files,
             $this->env,
-            [$this->raw]
-                );
+            ["raw" => $this->raw]
+        );
     }
 
     public function post(){

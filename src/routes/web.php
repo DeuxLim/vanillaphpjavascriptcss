@@ -2,6 +2,7 @@
 
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
+use App\Controllers\TaskController;
 
 
 $router = new App\Router();
@@ -24,6 +25,9 @@ $router->middleware(['guest'])->group(function ($router) {
 $router->middleware(['auth'])->group(function ($router) {
     $router->post('/logout', [AuthController::class, "logout"]);
     $router->get('/dashboard', [DashboardController::class, "index"]);
+
+    $router->get('/tasks', [TaskController::class, "index"]);
+    $router->patch('/task/{id}', [TaskController::class, "update"]);
 });
 
 // Open routes

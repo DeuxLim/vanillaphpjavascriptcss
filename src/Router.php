@@ -71,7 +71,33 @@ class Router {
     public function dispatch(){
         $method = $_SERVER['REQUEST_METHOD'] ?? null;
         $uri = $_SERVER['REQUEST_URI'] ?? null;
-        $routeDetails = $this->routes[$method][$uri] ?? null;
+
+        $routeDetails = null;
+
+        // Check if route matches exactly
+        if (isset($this->routes[$method][$uri])) {
+            $routeDetails = $this->routes[$method][$uri];
+        } else {
+            // Try placeholder match: /task/{id}
+            foreach ($this->routes[$method] ?? [] as $route => $details) {
+                // Find all placeholder names in the route
+                preg_match_all('#\{([^/]+)\}#', $route, $paramNames); // ['id']
+                $paramNames = $paramNames[1]; // only the names
+
+                // Convert route to regex
+                $pattern = preg_replace('#\{[^/]+\}#', '([^/]+)', $route);
+
+                if (preg_match("#^$pattern$#", $uri, $matches)) {
+                    array_shift($matches); // remove full match
+
+                    // Combine placeholder names with matched values
+                    $_GET['__params'] = array_combine($paramNames, $matches);
+
+                    $routeDetails = $details;
+                    break;
+                }
+            }
+        }
 
         if($routeDetails){
             $handler = $routeDetails['handler'] ?? null;
