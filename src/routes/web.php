@@ -26,8 +26,11 @@ $router->middleware(['auth'])->group(function ($router) {
     $router->post('/logout', [AuthController::class, "logout"]);
     $router->get('/dashboard', [DashboardController::class, "index"]);
 
-    $router->get('/tasks', [TaskController::class, "index"]);
-    $router->patch('/task/{id}', [TaskController::class, "update"]);
+    $router->get('/tasks', [TaskController::class, 'index']);      // list all tasks
+    $router->post('/tasks', [TaskController::class, 'store']);     // create new task
+    $router->get('/tasks/{id}', [TaskController::class, 'show']);  // get single task
+    $router->patch('/tasks/{id}', [TaskController::class, 'update']); // update task
+    $router->delete('/tasks/{id}', [TaskController::class, 'destroy']); // delete task
 });
 
 // Open routes

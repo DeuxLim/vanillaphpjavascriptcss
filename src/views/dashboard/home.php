@@ -12,7 +12,7 @@
         <div class="header-content">
             <h1 class="logo">Todo App</h1>
             <div class="user-menu">
-                <span class="welcome-text">Welcome, <?= htmlspecialchars($_SESSION['user_data']['first_name'])?>!</span>
+                <span class="welcome-text">Welcome, <?= htmlspecialchars($_SESSION['user_name'])?>!</span>
                 <form method="POST" action="/logout" style="display: inline;">
                     <button type="submit" class="logout-btn">Logout</button>
                 </form>
@@ -60,16 +60,16 @@
                     <h3>Add New Task</h3>
                     <form action="/tasks" method="POST">
                         <div class="form-group">
-                            <label for="taskTitle">Task Title</label>
-                            <input type="text" id="taskTitle" name="title" required />
+                            <label for="task_title">Task Title</label>
+                            <input type="text" id="task_title" name="task_title" required />
                         </div>
                         <div class="form-group">
-                            <label for="taskDescription">Description</label>
-                            <textarea id="taskDescription" name="description" rows="3"></textarea>
+                            <label for="task_description">Description</label>
+                            <textarea id="task_description" name="task_description" rows="3"></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="taskPriority">Priority</label>
-                            <select id="taskPriority" name="priority">
+                            <label for="task_priority">Priority</label>
+                            <select id="task_priority" name="task_priority">
                                 <option value="low">Low</option>
                                 <option value="medium" selected>Medium</option>
                                 <option value="high">High</option>
