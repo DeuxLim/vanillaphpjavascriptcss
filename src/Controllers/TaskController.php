@@ -16,7 +16,7 @@ class TaskController {
 
     public function index(){
         $user_id = $_SESSION['user_id'];
-        $query = $this->DB->prepare("SELECT * FROM tasks WHERE task_owner = :owner;");
+        $query = $this->DB->prepare("SELECT * FROM tasks WHERE task_owner = :owner AND task_deleted != 1;");
         $query->execute(["owner" => $user_id]);
         $tasks = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -100,6 +100,34 @@ class TaskController {
     }
 
     public function destroy(Request $request){
-        dd($request);
+        $task_deleted = json_decode($request->all()["raw"], true)['fields']['task_deleted'];
+        $task_id = $request->all()['__params']['id'];
+
+        $query = $this->DB->prepare("UPDATE tasks SET task_deleted = :task_deleted WHERE task_id = :task_id and task_owner = :task_owner");
+        $query->execute([
+            ':task_deleted' => $task_deleted,
+            ':task_id' => $task_id,
+            ':task_owner' => $_SESSION['user_id'],
+        ]);
+
+        // Check how many rows were updated
+        $rowsAffected = $query->rowCount();
+
+        header('Content-Type: application/json');
+
+        if ($rowsAffected > 0) {
+            echo json_encode([
+                "status" => "success",
+                "message" => "Task deleted successfully",
+                "task_id" => $task_id,
+                "task_deleted" => $task_deleted
+            ]);
+        } else {
+            echo json_encode([
+                "status" => "error",
+                "message" => "No task was deleted. Check task ID or owner.",
+                "task_id" => $task_id
+            ]);
+        }
     }
 }

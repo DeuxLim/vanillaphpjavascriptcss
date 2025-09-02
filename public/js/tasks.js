@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error("Network error: " + response.statusText);
             }
 
+            displayTasks();
             const data = await response.json(); 
     
             return data;
@@ -27,51 +28,95 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // handle task checkbox for task status
+    // Change Events
     const tasks_list = document.querySelector(".tasks-list");
-    tasks_list.addEventListener("change", updateTaskStatus);
+    tasks_list.addEventListener("change", (event) => {
+        switch(true){
+            case event.target.matches(".task_status") : 
+                updateTaskStatus(event);
+            break;
+
+            default : 
+                console.log("no changes were made.");
+        }
+    });
+
+    // Click Events
+    tasks_list.addEventListener("click", (event) => {
+        switch (true) {
+            case event.target.matches(".delete-btn"):
+                deleteTask(event);
+            break;
+
+            case event.target.matches(".edit-btn"):
+                editTask(event);
+            break;
+
+            default:
+                console.log("no matching button action.");
+        }
+    });
 })
 
-async function updateTaskStatus(event){
-    let taskStatusChanged = event.target.matches(".task_status");
+async function deleteTask(event){
+    let task_item = event.target.closest(".task-item");
+    let task_id = task_item.dataset.id;
+    let uri = `/tasks/${task_id}`;
+    let method = "DELETE";
+    let updatedField = {
+        task_deleted : 1
+    };
 
-    if(!taskStatusChanged){
-        return;
+    try {
+        const data = await updateTask(updatedField, method, uri);
+
+        if(data.status === "success"){
+            displayTasks();
+        }
+
+        return data;        
+    } catch (error) {
+        console.log(error);
     }
 
+
+    console.log(task_id);
+}
+
+async function editTask(event){
+    let task_item = event.target.closest(".task-item");
+    console.log(task_item);
+}
+
+async function updateTaskStatus(event){
     let taskId = event.target.dataset.id;
+    let uri = `/tasks/${taskId}`;
+    let method = "PATCH"
+    let updatedField = {
+        task_completed: event.target.checked
+    };
 
     try{
-        let updatedField = {
-            task_completed: event.target.checked
-        };
-
-        let data = await updateTask(taskId, updatedField);
+        let data = await updateTask(updatedField, method, uri);
        
         if(data.status === "success"){
-            let taskItem = document.querySelector(`#task-item-${data.task_id}`);
-
-            if(data.task_completed === true){
-                taskItem.classList.add('completed');
-            } else {
-                taskItem.classList.remove('completed');
-            }
+            displayTasks();
         }
 
         return data;
     } catch (error) {
         console.log(error);
     }
-
 }
 
-async function updateTask(taskId, updatedFields){
+async function updateTask(updatedFields, method, uri){
     const allowedFields = [
         "task_title",
         "task_description",
         "task_priority",
         "task_due",
-        "task_completed"
+        "task_completed",
+        "task_deleted"
     ];
 
     // Pick only allowed keys
@@ -87,8 +132,8 @@ async function updateTask(taskId, updatedFields){
     }
 
     try{
-        const response = await fetch(`/tasks/${taskId}`, {
-            method : "PATCH",
+        const response = await fetch(uri, {
+            method : method,
             headers: {
                 "Content-Type": "application/json",
             },
@@ -125,6 +170,7 @@ async function getTasks() {
 
 async function displayTasks(){
     tasksContainer = document.querySelector(".tasks-list");
+    tasksContainer.innerHTML = "";
 
     try{
         let tasks = await getTasks();
@@ -132,7 +178,7 @@ async function displayTasks(){
         let taskCard = "";
         tasks.forEach((task) => {
             taskCard += `
-                <div class="task-item ${task.task_completed ? "completed" : ""}" id="task-item-${task.task_id}">
+                <div class="task-item ${task.task_completed ? "completed" : ""}" id="task-item-${task.task_id}" data-id="${task.task_id}">
                     <div class="task-checkbox">
                         <input class="task_status" type="checkbox" data-id="${task.task_id}" id="task_status_${task.task_id}" ${task.task_completed ? "checked" : ""}/>
                         <label for="task_status_${task.task_id}"></label>
