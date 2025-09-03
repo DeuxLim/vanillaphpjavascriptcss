@@ -49,11 +49,39 @@ document.addEventListener("DOMContentLoaded", () => {
             break;
 
             case event.target.matches(".edit-btn"):
-                editTask(event);
+                showEditForm(event);
             break;
 
-            default:
-                console.log("no matching button action.");
+            case event.target.matches(".cancel-btn"):
+                const form = event.target.closest(".edit-task-form");
+                const task_id = form.querySelector("form").dataset.id;
+                const task_item = document.querySelector(`#task-item-${task_id}`);
+
+                form.style.display = "none";
+                task_item.style.display = "flex";
+        }
+    });
+
+    // Handle edit form submit
+    tasks_list.addEventListener("submit", async (event) => {
+        if (event.target.matches(".edit-task-form form")) {
+            event.preventDefault();
+
+            const task_id = event.target.dataset.id;
+            const uri = `/tasks/${task_id}`;
+            const method = "PATCH";
+
+            let editFormData = new FormData(event.target);
+            let updatedField = Object.fromEntries(editFormData.entries());
+
+            try {
+                let data = await updateTask(updatedField, method, uri);
+                if (data.status === "success") {
+                    displayTasks();
+                }
+            } catch (error) {
+                console.log(error);
+            }
         }
     });
 })
@@ -83,9 +111,13 @@ async function deleteTask(event){
     console.log(task_id);
 }
 
-async function editTask(event){
+async function showEditForm(event){
     let task_item = event.target.closest(".task-item");
-    console.log(task_item);
+    let task_id = task_item.dataset.id;
+    let task_edit_form = document.querySelector(`.task_${task_id}`);
+    
+    task_edit_form.style.display = "block";
+    task_item.style.display = "none";
 }
 
 async function updateTaskStatus(event){
@@ -194,6 +226,39 @@ async function displayTasks(){
                     <div class="task-actions">
                         <button class="edit-btn">✏️</button>
                         <button class="delete-btn">🗑️</button>
+                    </div>
+                </div>
+
+                <!-- Edit Task Form (Hidden by default) -->
+                <div class="edit-task-form task_${task.task_id}" style="display: none;">
+                    <div class="form-wrapper">
+                        <h3>Edit Task</h3>
+                        <form data-id="${task.task_id}">
+                            <div class="form-group">
+                                <label>Task Title</label>
+                                <input type="text" name="task_title" value="${task.task_title}" required />
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea name="task_description" rows="3">${task.task_description}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Priority</label>
+                                <select name="task_priority">
+                                    <option value="low" ${task.task_priority === 'low' ? 'selected' : ''}>Low</option>
+                                    <option value="medium" ${task.task_priority === 'medium' ? 'selected' : ''}>Medium</option>
+                                    <option value="high" ${task.task_priority === 'high' ? 'selected' : ''}>High</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Due Date</label>
+                                <input type="date" name="task_due" value="${task.task_due}">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="cancel-btn">Cancel</button>
+                                <button type="submit" class="submit-btn">Save Task</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             `;

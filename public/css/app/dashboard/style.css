@@ -159,7 +159,28 @@ body {
 }
 
 /* Add Task Form */
-.add-task-form {
+.edit-task-form {
+    margin-bottom: 3rem;
+}
+
+.edit-task-form .form-wrapper {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.edit-task-form h3 {
+    color: #2d3748;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+/* Add Task Form */
+.edit-task-form {
     margin-bottom: 3rem;
 }
 
