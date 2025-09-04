@@ -201,14 +201,17 @@ async function getTasks() {
 }
 
 async function displayTasks(){
-    tasksContainer = document.querySelector(".tasks-list");
+    const tasksContainer = document.querySelector(".tasks-list");
     tasksContainer.innerHTML = "";
+    const taskTotalElement = document.querySelector(".stat-info.total");
+    const taskCompletedElement = document.querySelector(".stat-info.completed");
+    const taskPendingElement = document.querySelector(".stat-info.pending");
 
     try{
         let tasks = await getTasks();
 
         let taskCard = "";
-        tasks.forEach((task) => {
+        tasks.tasks.forEach((task) => {
             taskCard += `
                 <div class="task-item ${task.task_completed ? "completed" : ""}" id="task-item-${task.task_id}" data-id="${task.task_id}">
                     <div class="task-checkbox">
@@ -265,6 +268,9 @@ async function displayTasks(){
         });
 
         tasksContainer.innerHTML += taskCard;
+        taskTotalElement.querySelector("h3").innerHTML = tasks.counts.total;    
+        taskCompletedElement.querySelector("h3").innerHTML = tasks.counts.completed;    
+        taskPendingElement.querySelector("h3").innerHTML = tasks.counts.pending;    
     } catch (error) {
         console.log(error);
     }

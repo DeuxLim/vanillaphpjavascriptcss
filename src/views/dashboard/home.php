@@ -33,22 +33,22 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon">📋</div>
-                    <div class="stat-info">
-                        <h3>12</h3>
+                    <div class="stat-info total">
+                        <h3></h3>
                         <p>Total Tasks</p>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">✅</div>
-                    <div class="stat-info">
-                        <h3>8</h3>
+                    <div class="stat-info completed">
+                        <h3></h3>
                         <p>Completed</p>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">⏳</div>
-                    <div class="stat-info">
-                        <h3>4</h3>
+                    <div class="stat-info pending">
+                        <h3></h3>
                         <p>Pending</p>
                     </div>
                 </div>
@@ -75,6 +75,12 @@
                                 <option value="high">High</option>
                             </select>
                         </div>
+
+                        <div class="form-group">
+                            <label>Due Date</label>
+                            <input type="date" name="task_due" value="${task.task_due}">
+                        </div>
+
                         <div class="form-actions">
                             <button type="button" class="cancel-btn" onclick="hideAddTaskForm()">Cancel</button>
                             <button type="submit" class="submit-btn">Add Task</button>

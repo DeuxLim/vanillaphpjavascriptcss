@@ -20,28 +20,44 @@ class TaskController {
         $query->execute(["owner" => $user_id]);
         $tasks = $query->fetchAll(PDO::FETCH_ASSOC);
 
+        $total_tasks_count = count($tasks);
+        $total_completed_count = count(array_filter($tasks, function ($task) {
+            return $task['task_completed'] === 1;
+        }));
+        $total_pending_count = count(array_filter($tasks, function ($task) {
+            return $task['task_completed'] === 0;
+        }));
+
         header('Content-Type: application/json');
-        echo json_encode($tasks);
+        echo json_encode([
+            "tasks" => $tasks,
+            "counts" => [
+                "total" => $total_tasks_count,
+                "completed" => $total_completed_count,
+                "pending" => $total_pending_count
+            ]
+        ]);
         exit;
     }
 
     public function store(Request $request){
         // TODO:
-        // - Implement task due date handling
         // - Add input validation
 
         $actual_request = $request->all();
         $task_title = $actual_request['task_title'];
         $task_description = $actual_request['task_description'];
         $task_priority = $actual_request['task_priority'];
+        $task_due = $actual_request['task_due'];
         $task_owner = $_SESSION['user_id'];
 
-        $query = $this->DB->prepare("INSERT INTO tasks (task_title, task_description, task_priority, task_owner) VALUES (:task_title, :task_description, :task_priority, :task_owner)");
+        $query = $this->DB->prepare("INSERT INTO tasks (task_title, task_description, task_priority, task_owner, task_due) VALUES (:task_title, :task_description, :task_priority, :task_owner, :task_due)");
         $query->execute([
             ':task_title' => $task_title,
             ':task_description' => $task_description,
             ':task_priority' => $task_priority,
-            ':task_owner' => $task_owner
+            ':task_owner' => $task_owner,
+            ':task_due' => $task_due
         ]);
 
         // get the newly added task's ID
@@ -68,28 +84,43 @@ class TaskController {
     }
 
     public function update(Request $request){
-        $task_completed = json_decode($request->all()["raw"], true)['fields']['task_completed'];
+        // WIP :: Insert input validation here 
+        $updated_fields = json_decode($request->all()["raw"], true)['fields'];
         $taskId = $request->all()['__params']['id'];
 
-        $query = $this->DB->prepare("UPDATE tasks SET task_completed = :task_completed WHERE task_owner = :task_owner AND task_id = :task_id");
-        $query->execute([
-            ':task_completed' => !empty($task_completed) ? $task_completed : 0,
+        $query = "UPDATE tasks SET ";
+        $queryFields = "";
+        $where = " WHERE task_owner = :task_owner AND task_id = :task_id";
+        $last_key = array_key_last($updated_fields);
+        $updateParams = [];
+        foreach($updated_fields as $field => $value){
+            $queryFields .= "$field = :$field";
+            if($last_key !== $field){
+                $queryFields .= ", ";
+            }
+
+            $updateParams[":$field"] = is_bool($value) ? (int)$value : $value;
+        }
+
+        $finalParams = array_merge($updateParams, [
             ':task_owner' => $_SESSION['user_id'],
             ':task_id' => $taskId
         ]);
+        $completeQuery = $query . $queryFields . $where;
+
+        $query = $this->DB->prepare($completeQuery);
+        $query->execute($finalParams);
 
         // Check how many rows were updated
         $rowsAffected = $query->rowCount();
 
         header('Content-Type: application/json');
-
         if ($rowsAffected > 0) {
             echo json_encode([
                 "status" => "success",
                 "message" => "Task updated successfully",
-                "task_id" => $taskId,
-                "task_completed" => $task_completed
-            ]);
+                "task_id" => $taskId
+        ]);
         } else {
             echo json_encode([
                 "status" => "error",
