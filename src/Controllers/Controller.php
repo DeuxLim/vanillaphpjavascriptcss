@@ -24,7 +24,7 @@ class Controller {
         header('Content-Type: application/json');
 
         // Prepare payload
-        $descriptiveStatus = ($statusCode > 200 && $statusCode < 300) ? self::RESPONSE_STATUSES["success"] : self::RESPONSE_STATUSES["error"];
+        $descriptiveStatus = ($statusCode >= 200 && $statusCode < 300) ? self::RESPONSE_STATUSES["success"] : self::RESPONSE_STATUSES["error"];
         $statusMessage = self::RESPONSE_MESSAGES[$descriptiveStatus];
         $payload = [
             "status" => $descriptiveStatus,

@@ -93,7 +93,7 @@ class TaskController extends Controller {
         $task_title = trim($actual_request['task_title']);
         $task_description = trim($actual_request['task_description']);
         $task_priority = trim($actual_request['task_priority']);
-        $task_owner = $_SESSION['user_id'];
+        $task_owner = Session::getCurrentUser();
 
         // Handle date input - task_due
         $task_due_unformatted = $actual_request['task_due'];
@@ -109,19 +109,13 @@ class TaskController extends Controller {
             ':task_owner' => $task_owner,
             ':task_due' => $task_due
         ]);
-
-        // get the newly added task's ID
         $newTaskId = $this->DB->lastInsertId();
 
-        // Handle unsuccessful request
+        // Response
         if(!$newTaskId){
             $this->sendErrorJsonResponse("No task was added", 500);
         }
-
-        // Send Response
-        $this->sendJsonResponse([
-            "task_id" => $newTaskId,
-        ], 201);
+        $this->sendJsonResponse(["task_id" => $newTaskId], 201);
     }
 
     public function show(Request $request){
@@ -129,10 +123,13 @@ class TaskController extends Controller {
     }
 
     public function update(Request $request){
-        // WIP :: Insert input validation here 
         $updated_fields = json_decode($request->all()["raw"], true)['fields'];
-        $taskId = $request->all()['__params']['id'];
+        $task_id = $this->getTaskIdFromParams($request);
 
+        // WIP :: Insert input validation here 
+        // Logic...
+
+        // Prepare update query
         $query = "UPDATE tasks SET ";
         $queryFields = "";
         $where = " WHERE task_owner = :task_owner AND task_id = :task_id";
@@ -152,63 +149,48 @@ class TaskController extends Controller {
             $updateParams[":$field"] = is_bool($value) ? (int)$value : $value;
         }
 
+        // Execute query
         $finalParams = array_merge($updateParams, [
-            ':task_owner' => $_SESSION['user_id'],
-            ':task_id' => $taskId
+            ':task_owner' => Session::getCurrentUser(),
+            ':task_id' => $task_id
         ]);
         $completeQuery = $query . $queryFields . $where;
-
         $query = $this->DB->prepare($completeQuery);
         $query->execute($finalParams);
 
-        // Check how many rows were updated
+        // Response
         $rowsAffected = $query->rowCount();
-
-        header('Content-Type: application/json');
-        if ($rowsAffected > 0) {
-            echo json_encode([
-                "status" => "success",
-                "message" => "Task updated successfully",
-                "task_id" => $taskId
-        ]);
-        } else {
-            echo json_encode([
-                "status" => "error",
-                "message" => "No task was updated. Check task ID or owner.",
-                "task_id" => $taskId
-            ]);
+        if($rowsAffected === 0){
+            $this->sendErrorJsonResponse("No task was updated");
         }
+        $this->sendJsonResponse(["task_id" => $task_id]);
     }
 
     public function destroy(Request $request){
         $task_deleted = json_decode($request->all()["raw"], true)['fields']['task_deleted'];
-        $task_id = $request->all()['__params']['id'];
+        $task_id = $this->getTaskIdFromParams($request);
 
+        // Delete task
         $query = $this->DB->prepare("UPDATE tasks SET task_deleted = :task_deleted WHERE task_id = :task_id and task_owner = :task_owner");
         $query->execute([
             ':task_deleted' => $task_deleted,
             ':task_id' => $task_id,
-            ':task_owner' => $_SESSION['user_id'],
+            ':task_owner' => Session::getCurrentUser(),
         ]);
 
-        // Check how many rows were updated
+        // Response
         $rowsAffected = $query->rowCount();
-
-        header('Content-Type: application/json');
-
-        if ($rowsAffected > 0) {
-            echo json_encode([
-                "status" => "success",
-                "message" => "Task deleted successfully",
-                "task_id" => $task_id,
-                "task_deleted" => $task_deleted
-            ]);
-        } else {
-            echo json_encode([
-                "status" => "error",
-                "message" => "No task was deleted. Check task ID or owner.",
-                "task_id" => $task_id
-            ]);
+        if($rowsAffected === 0){
+            $this->sendErrorJsonResponse("No task was deleted.");
         }
+        $this->sendJsonResponse(["task_id" => $task_id]);
+    }
+
+    // ===== PRIVATE HELPER METHODS =====
+    public function getTaskIdFromParams(Request $request){
+        $params = $request->all();
+        $taskId = $params['__params']['id'] ?? null;
+        
+        return $taskId ? (int)$taskId : null;
     }
 }
