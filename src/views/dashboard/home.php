@@ -78,7 +78,7 @@
 
                         <div class="form-group">
                             <label>Due Date</label>
-                            <input type="date" name="task_due" value="${task.task_due}">
+                            <input type="datetime-local" name="task_due">
                         </div>
 
                         <div class="form-actions">
@@ -92,67 +92,7 @@
             <!-- Tasks List -->
             <div class="tasks-section">
                 <h3>Your Tasks</h3>
-                <div class="tasks-list">
-                    <!-- Sample Task 1 -->
-                    <div class="task-item">
-                        <div class="task-checkbox">
-                            <input type="checkbox" id="task1" />
-                            <label for="task1"></label>
-                        </div>
-                        <div class="task-content">
-                            <h4>Complete project documentation</h4>
-                            <p>Write comprehensive documentation for the new feature</p>
-                            <div class="task-meta">
-                                <span class="priority high">High Priority</span>
-                                <span class="date">Due: Today</span>
-                            </div>
-                        </div>
-                        <div class="task-actions">
-                            <button class="edit-btn">✏️</button>
-                            <button class="delete-btn">🗑️</button>
-                        </div>
-                    </div>
-
-                    <!-- Sample Task 2 -->
-                    <div class="task-item completed">
-                        <div class="task-checkbox">
-                            <input type="checkbox" id="task2" checked />
-                            <label for="task2"></label>
-                        </div>
-                        <div class="task-content">
-                            <h4>Review code changes</h4>
-                            <p>Review the pull requests from the development team</p>
-                            <div class="task-meta">
-                                <span class="priority medium">Medium Priority</span>
-                                <span class="date">Completed: Yesterday</span>
-                            </div>
-                        </div>
-                        <div class="task-actions">
-                            <button class="edit-btn">✏️</button>
-                            <button class="delete-btn">🗑️</button>
-                        </div>
-                    </div>
-
-                    <!-- Sample Task 3 -->
-                    <div class="task-item">
-                        <div class="task-checkbox">
-                            <input type="checkbox" id="task3" />
-                            <label for="task3"></label>
-                        </div>
-                        <div class="task-content">
-                            <h4>Update website design</h4>
-                            <p>Implement the new design mockups for the homepage</p>
-                            <div class="task-meta">
-                                <span class="priority low">Low Priority</span>
-                                <span class="date">Due: Next Week</span>
-                            </div>
-                        </div>
-                        <div class="task-actions">
-                            <button class="edit-btn">✏️</button>
-                            <button class="delete-btn">🗑️</button>
-                        </div>
-                    </div>
-                </div>
+                <div class="tasks-list"></div>
             </div>
         </div>
     </main>

@@ -48,8 +48,10 @@ class TaskController {
         $task_title = $actual_request['task_title'];
         $task_description = $actual_request['task_description'];
         $task_priority = $actual_request['task_priority'];
-        $task_due = $actual_request['task_due'];
         $task_owner = $_SESSION['user_id'];
+        $task_due_unformatted = $actual_request['task_due'];
+        $timestamp = strtotime($task_due_unformatted);
+        $task_due = date("Y-m-d H:i", $timestamp);
 
         $query = $this->DB->prepare("INSERT INTO tasks (task_title, task_description, task_priority, task_owner, task_due) VALUES (:task_title, :task_description, :task_priority, :task_owner, :task_due)");
         $query->execute([
@@ -64,7 +66,6 @@ class TaskController {
         $newTaskId = $this->DB->lastInsertId();
 
         header('Content-Type: application/json');
-
         if ($newTaskId !== "0") {
             echo json_encode([
                 "status" => "success",
@@ -80,7 +81,8 @@ class TaskController {
     }
 
     public function show(Request $request){
-        dd($request);
+        header("Content-Type: application/json");
+        echo json_encode(["status" => "error", "message" => "This endpoint is currently not available"]);
     }
 
     public function update(Request $request){
@@ -94,6 +96,11 @@ class TaskController {
         $last_key = array_key_last($updated_fields);
         $updateParams = [];
         foreach($updated_fields as $field => $value){
+            if($field === "task_completed" && $value){
+                $updateParams["task_completed_date"] = date("Y-m-d H:i");
+                $queryFields .= "task_completed_date = :task_completed_date, ";
+            }
+
             $queryFields .= "$field = :$field";
             if($last_key !== $field){
                 $queryFields .= ", ";

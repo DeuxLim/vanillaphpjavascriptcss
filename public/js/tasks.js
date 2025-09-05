@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             displayTasks();
+            hideAddTaskForm();
             const data = await response.json(); 
     
             return data;
@@ -35,9 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
             case event.target.matches(".task_status") : 
                 updateTaskStatus(event);
             break;
-
-            default : 
-                console.log("no changes were made.");
         }
     });
 
@@ -53,12 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
             break;
 
             case event.target.matches(".cancel-btn"):
-                const form = event.target.closest(".edit-task-form");
-                const task_id = form.querySelector("form").dataset.id;
-                const task_item = document.querySelector(`#task-item-${task_id}`);
-
-                form.style.display = "none";
-                task_item.style.display = "flex";
+                hideEditTaskForm(event);
         }
     });
 
@@ -255,7 +248,7 @@ async function displayTasks(){
                             </div>
                             <div class="form-group">
                                 <label>Due Date</label>
-                                <input type="date" name="task_due" value="${task.task_due}">
+                                <input type="datetime-local" name="task_due" value="${task.task_due}">
                             </div>
                             <div class="form-actions">
                                 <button type="button" class="cancel-btn">Cancel</button>
@@ -283,6 +276,14 @@ function showAddTaskForm() {
 
 function hideAddTaskForm() {
     document.getElementById('addTaskForm').style.display = 'none';
+}
+function hideEditTaskForm(event) {
+    const form = event.target.closest(".edit-task-form");
+    const task_id = form.querySelector("form").dataset.id;
+    const task_item = document.querySelector(`#task-item-${task_id}`);
+
+    form.style.display = "none";
+    task_item.style.display = "flex";
 }
 
 // Handle task completion
