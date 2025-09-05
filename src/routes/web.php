@@ -35,7 +35,7 @@ $router->middleware(['auth'])->group(function ($router) {
 
 // Open routes
 $router->get('/', function () {
-    echo "Welcome to the best To Do App!";
+    view("index");
 });
 
 

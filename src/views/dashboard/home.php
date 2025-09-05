@@ -10,7 +10,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1 class="logo">Todo App</h1>
+            <h1 class="logo"><a href="/">TaskFlow</a></h1>
             <div class="user-menu">
                 <span class="welcome-text">Welcome, <?= htmlspecialchars($_SESSION['user_name'])?>!</span>
                 <form method="POST" action="/logout" style="display: inline;">
