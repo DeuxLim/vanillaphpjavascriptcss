@@ -22,8 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
             displayTasks();
             hideAddTaskForm();
             const data = await response.json(); 
-    
-            return data;
+            console.log(data);
         } catch (error) {
             console.log(error);
         }
@@ -204,7 +203,7 @@ async function displayTasks(){
         let tasks = await getTasks();
 
         let taskCard = "";
-        tasks.tasks.forEach((task) => {
+        tasks.data.tasks.forEach((task) => {
             taskCard += `
                 <div class="task-item ${task.task_completed ? "completed" : ""}" id="task-item-${task.task_id}" data-id="${task.task_id}">
                     <div class="task-checkbox">
@@ -261,9 +260,9 @@ async function displayTasks(){
         });
 
         tasksContainer.innerHTML += taskCard;
-        taskTotalElement.querySelector("h3").innerHTML = tasks.counts.total;    
-        taskCompletedElement.querySelector("h3").innerHTML = tasks.counts.completed;    
-        taskPendingElement.querySelector("h3").innerHTML = tasks.counts.pending;    
+        taskTotalElement.querySelector("h3").innerHTML = tasks.data.counts.total;    
+        taskCompletedElement.querySelector("h3").innerHTML = tasks.data.counts.completed;    
+        taskPendingElement.querySelector("h3").innerHTML = tasks.data.counts.pending;    
     } catch (error) {
         console.log(error);
     }
