@@ -89,9 +89,9 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 let data = await updateTask(updatedField, method, uri);
 
-                if(data.data.error_message){
+                if(data.error){
                     Swal.fire({
-                        title : data.data.error_message,
+                        title : data.error.message,
                         icon : "info"
                     });
                     return;
