@@ -59,8 +59,11 @@ class TaskController extends Controller {
                     "pending" => $total_pending_count
                 ]
             ], 201);
+            exit();
+
         } catch (Exception $e) {
-            $this->sendErrorJsonResponse("Failed to retrieve tasks");
+            $this->sendErrorJsonResponse("Failed to retrieve tasks", 500);
+            exit();
         }
     }
 
@@ -87,6 +90,7 @@ class TaskController extends Controller {
 
         if ($errors) {
             $this->sendErrorJsonResponse("Form input has errors", 422, $errors);
+            exit();
         }
     
         // Prepare inputs
@@ -114,56 +118,117 @@ class TaskController extends Controller {
         // Response
         if(!$newTaskId){
             $this->sendErrorJsonResponse("No task was added", 500);
+            exit();
         }
+
         $this->sendJsonResponse(["task_id" => $newTaskId], 201);
+        exit();
     }
 
     public function show(Request $request){
         $this->sendErrorJsonResponse("This endpoint is currently under development.", 404);
+        exit();
     }
 
     public function update(Request $request){
-        $updated_fields = json_decode($request->all()["raw"], true)['fields'];
-        $task_id = $this->getTaskIdFromParams($request);
+        try{
+            $updated_fields = json_decode($request->all()["raw"], true)['fields'];
+            $task_id = $this->getTaskIdFromParams($request);
+            $errors = [];
 
-        // WIP :: Insert input validation here 
-        // Logic...
-
-        // Prepare update query
-        $query = "UPDATE tasks SET ";
-        $queryFields = "";
-        $where = " WHERE task_owner = :task_owner AND task_id = :task_id";
-        $last_key = array_key_last($updated_fields);
-        $updateParams = [];
-        foreach($updated_fields as $field => $value){
-            if($field === "task_completed" && $value){
-                $updateParams["task_completed_date"] = date("Y-m-d H:i");
-                $queryFields .= "task_completed_date = :task_completed_date, ";
+            // Validate task_id exists
+            if (!$task_id) {
+                $this->sendErrorJsonResponse("Invalid or missing task ID.", 400);
+                exit();
             }
 
-            $queryFields .= "$field = :$field";
-            if($last_key !== $field){
-                $queryFields .= ", ";
+            // Validate each field
+            foreach($updated_fields as $field => $value) {
+                // Check if field is allowed
+                if (!in_array($field, self::MODIFIABLE_FIELDS)) {
+                    $errors[$field] = "Field '$field' is not allowed to be updated.";
+                }
+
+                // Field-specific validation
+                switch($field) {
+                    case 'task_title':
+                        if (!is_string($value) || empty(trim($value)) || strlen($value) > 255) {
+                            $errors[$field] = "Task title must be a non-empty string (max 255 chars).";
+                        }
+                        break;
+                        
+                    case 'task_description':
+                        if (!is_string($value) || strlen($value) > 1000) {
+                            $errors[$field] = "Task description must be a string (max 1000 chars).";
+                        }
+                        break;
+                        
+                    case 'task_completed':
+                        if (!is_bool($value)) {
+                            $errors[$field] = "Task completed must be true or false.";
+                        }
+                        break;
+                        
+                    case 'task_priority':
+                        $validPriorities = ['low', 'medium', 'high'];
+                        if (!in_array($value, $validPriorities)) {
+                            $errors[$field] = "Task priority must be: low, medium, or high.";
+                        }
+                        break;
+                        
+                    case 'task_due_date':
+                        if ($value !== null && !strtotime($value)) {
+                            $errors[$field] = "Invalid date format for due date.";
+                        }
+                        break;
+                }
             }
 
-            $updateParams[":$field"] = is_bool($value) ? (int)$value : $value;
-        }
+            if(!empty($errors)){
+                $this->sendErrorJsonResponse("Task update request contains invalid inputs", 400, $errors);
+                exit();
+            }
 
-        // Execute query
-        $finalParams = array_merge($updateParams, [
-            ':task_owner' => Session::getCurrentUser(),
-            ':task_id' => $task_id
-        ]);
-        $completeQuery = $query . $queryFields . $where;
-        $query = $this->DB->prepare($completeQuery);
-        $query->execute($finalParams);
+            // Prepare update query
+            $query = "UPDATE tasks SET ";
+            $queryFields = "";
+            $where = " WHERE task_owner = :task_owner AND task_id = :task_id";
+            $last_key = array_key_last($updated_fields);
+            $updateParams = [];
+            foreach($updated_fields as $field => $value){
+                if($field === "task_completed" && $value){
+                    $updateParams["task_completed_date"] = date("Y-m-d H:i");
+                    $queryFields .= "task_completed_date = :task_completed_date, ";
+                }
 
-        // Response
-        $rowsAffected = $query->rowCount();
-        if($rowsAffected === 0){
-            $this->sendErrorJsonResponse("No changes were made.", 200);
+                $queryFields .= "$field = :$field";
+                if($last_key !== $field){
+                    $queryFields .= ", ";
+                }
+
+                $updateParams[":$field"] = is_bool($value) ? (int)$value : $value;
+            }
+
+            // Execute query
+            $finalParams = array_merge($updateParams, [
+                ':task_owner' => Session::getCurrentUser(),
+                ':task_id' => $task_id
+            ]);
+            $completeQuery = $query . $queryFields . $where;
+            $query = $this->DB->prepare($completeQuery);
+            $query->execute($finalParams);
+
+            // Response
+            $rowsAffected = $query->rowCount();
+            if($rowsAffected === 0){
+                $this->sendErrorJsonResponse("No changes were made.", 200);
+                exit();
+            }
+        
+            $this->sendJsonResponse(["task_id" => $task_id], 200, "Task updated.");
+        } catch (Exception $e) {
+            $this->sendErrorJsonResponse("Failed to update task.", 500);
         }
-        $this->sendJsonResponse(["task_id" => $task_id]);
     }
 
     public function destroy(Request $request){
@@ -181,9 +246,12 @@ class TaskController extends Controller {
         // Response
         $rowsAffected = $query->rowCount();
         if($rowsAffected === 0){
-            $this->sendErrorJsonResponse("No task was deleted.");
+            $this->sendErrorJsonResponse("No task was deleted.", 400);
+            exit();
         }
-        $this->sendJsonResponse(["task_id" => $task_id]);
+
+        $this->sendJsonResponse(["task_id" => $task_id], 200, "Task deleted.");
+        exit();
     }
 
     // ===== PRIVATE HELPER METHODS =====

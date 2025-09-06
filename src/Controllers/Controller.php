@@ -17,7 +17,7 @@ class Controller {
         "failed"  => "An error occurred while processing the request."
     ];
 
-    public function sendJsonResponse(array $data = [], int $statusCode = 200): void
+    public function sendJsonResponse(array $data = [], int $statusCode = 200, ? string $message = null): void
     {
         // Set headers
         http_response_code($statusCode);
@@ -25,28 +25,31 @@ class Controller {
 
         // Prepare payload
         $descriptiveStatus = ($statusCode >= 200 && $statusCode < 300) ? self::RESPONSE_STATUSES["success"] : self::RESPONSE_STATUSES["error"];
-        $statusMessage = self::RESPONSE_MESSAGES[$descriptiveStatus];
+        $statusMessage = $message ? $message : self::RESPONSE_MESSAGES[$descriptiveStatus];
         $payload = [
             "status" => $descriptiveStatus,
             "message" => $statusMessage,
-            "data" => $data
         ];
+
+        if (empty($data['error'])) {
+            $payload['data'] = $data;
+        } else {
+            $payload = array_merge($payload, $data);
+        }
 
         // Send response and exit
         echo json_encode($payload, JSON_UNESCAPED_UNICODE);
-        exit();
     }
 
     public function sendErrorJsonResponse(string $message, int $statusCode = 400, array $errors = [])
     {
         // Prepare payload
         $errorResponse = [
-            "error_message" => $message
+            "error" => array_filter([ // array_filter without callback removes null values
+                "message" => $message,
+                "details" => $errors ?: null
+            ])
         ];
-
-        if($errors){
-            $errorResponse["errors"] = $errors;
-        }
         
         // Send response through response handler
         $this->sendJsonResponse($errorResponse, $statusCode);    
