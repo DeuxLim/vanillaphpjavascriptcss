@@ -165,8 +165,8 @@ class TaskController extends Controller {
                         break;
                         
                     case 'task_completed':
-                        if (!is_bool($value)) {
-                            $errors[$field] = "Task completed must be true or false.";
+                        if (!in_array($value, [0, 1, "0", "1"], true)) {
+                            $errors[$field] = "Task completed must be 0 or 1.";
                         }
                         break;
                         

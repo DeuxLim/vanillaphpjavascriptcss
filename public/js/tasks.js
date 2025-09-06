@@ -153,7 +153,7 @@ async function updateTaskStatus(event){
     let uri = `/tasks/${taskId}`;
     let method = "PATCH"
     let updatedField = {
-        task_completed: event.target.checked
+        task_completed: event.target.checked ? 1 : 0
     };
 
     try{
