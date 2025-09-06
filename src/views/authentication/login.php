@@ -10,7 +10,7 @@
     <div class="container">
         <div class="form-wrapper">
             <div class="form-header">
-                <h1>Welcome Back</h1>
+                <h1>TaskFlow</h1>
                 <p>Sign in to access your todo list</p>
             </div>
             
@@ -51,7 +51,7 @@
 
                 <div class="form-options">
                     <label class="checkbox-container">
-                        <input type="checkbox" name="remember_me" value="1"/>
+                        <input type="checkbox" name="rememberMe" value="1"/>
                         <span class="checkmark"></span>
                         Remember me
                     </label>

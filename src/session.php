@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Database;
+
 class Session
 {
     private static ?Session $instance = null;
@@ -26,12 +28,39 @@ class Session
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+
+        if(!isset($_SESSION['user_id']) && isset($_COOKIE['remember_me'])){
+            // Get the value
+            list($userid, $token) = explode(":", $_COOKIE['remember_me']);
+
+            $DB = Database::instance()->getConnection();
+            $query = $DB->prepare("SELECT * FROM users WHERE id = :userid");
+            $query->execute([
+                ":userid" => $userid
+            ]);
+            $user = $query->fetch();
+
+            if($user && password_verify($token, $user['remember_token'])){
+                self::set("user_id", $user['id']);
+
+                // Refresh token
+                $token = bin2hex(random_bytes(32));                
+                $hashedToken = password_hash($token, PASSWORD_DEFAULT);
+                $query = $DB->prepare("UPDATE users SET remember_token = :token WHERE id = :userid");
+                $query->execute([
+                    ":token" => $hashedToken,
+                    ":userid" => $user['id']
+                ]);
+
+                setcookie("remember_me", $user['id'] . $token, time() + (86400 * 30), '/');
+            }
+        }
     }
 
     /* 
     * Get a session data 
     */
-    public function get(string $key, $default = null)
+    public static function get(string $key, $default = null)
     {
         return $_SESSION[$key] ?? $default;
     }
@@ -39,7 +68,7 @@ class Session
     /* 
     * Set a session data 
     */
-    public function set(string $key, $value)
+    public static function set(string $key, $value)
     {
         return $_SESSION[$key] = $value;
     }

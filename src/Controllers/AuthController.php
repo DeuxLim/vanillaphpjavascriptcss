@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Request;
 use App\Database;
+use App\Session;
 use Exception;
 use PDOException;
 use PDO;
@@ -11,6 +12,15 @@ use PDO;
 class AuthController
 {
     private $DB;
+    
+    protected const ALLOWED_INPUTS = [
+        "firstName",
+        "lastName",
+        "email",
+        "password",
+        "confirmPassword",
+        "rememberMe"
+    ];
 
     public function __construct()
     {
@@ -43,7 +53,7 @@ class AuthController
 
         $requestData = array_intersect_key(
             $requestData,
-            array_flip($expectedInputs)
+            array_flip(self::ALLOWED_INPUTS)
         );
 
         foreach ($requestData as $key => $data) {
@@ -144,15 +154,9 @@ class AuthController
         $requestData = $request->post();
         $errors = [];
 
-        // Validate inputs
-        $expectedInputs = [
-            "email",
-            "password"
-        ];
-
         $requestData = array_intersect_key(
             $requestData,
-            array_flip($expectedInputs)
+            array_flip(self::ALLOWED_INPUTS)
         );
 
         foreach ($requestData as $key => $data) {
@@ -185,15 +189,31 @@ class AuthController
                 if (password_verify($requestData['password'], $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['user_name'] = $user['first_name'];
-                    header("Location: /dashboard");
                 } else {
                     $errors['user'] = "Invalid email or password.";
                 }
             } else {
                 $errors['user'] = "Invalid email or password.";
             }
-        }
 
+            // Handle Remember Token
+            if(!empty($requestData['rememberMe']) && $user && empty($errors)){
+                // Generate random token
+                $token = bin2hex(random_bytes(32));
+                
+                // Hash token for DB (safer than storing plain token)
+                $hashedToken = password_hash($token, PASSWORD_DEFAULT);
+    
+                $query = $this->DB->prepare("UPDATE users SET remember_token = :token WHERE id = :userid");
+                $query->execute([
+                    ":token" => $hashedToken,
+                    ":userid" => $user['id']
+                ]);
+
+                setcookie("remember_me", $user['id'] . ":" . $token, time() + (86400 * 30), '/');
+            }
+        }
+        
         // Handle errors
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
@@ -201,15 +221,22 @@ class AuthController
             header("Location: /login");
             exit();
         }
+
+        header("Location: /dashboard");
     }
 
     public function logout()
     {
         // Unset all session variables
-        $_SESSION = array();
+        $_SESSION = [];
 
         // Delete session cookie (simplified)
         setcookie(session_name(), '', time() - 3600, '/');
+
+        // Delete remember me token
+        setcookie("remember_me", "", time() - 3600, '/');
+        $query = $this->DB->prepare("UPDATE users SET remember_token = NULL WHERE id = :userid");
+        $query->execute([":userid" => Session::get("user_id")]);
 
         // Destroy the session
         session_destroy();

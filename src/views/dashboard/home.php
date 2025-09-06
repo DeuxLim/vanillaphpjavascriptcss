@@ -14,7 +14,7 @@
         <div class="header-content">
             <h1 class="logo"><a href="/">TaskFlow</a></h1>
             <div class="user-menu">
-                <span class="welcome-text">Welcome, <?= htmlspecialchars($_SESSION['user_name'])?>!</span>
+                <span class="welcome-text">Welcome!</span>
                 <form method="POST" action="/logout" style="display: inline;">
                     <button type="submit" class="logout-btn">Logout</button>
                 </form>
