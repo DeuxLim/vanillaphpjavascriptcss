@@ -17,23 +17,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!response.ok) {
                 throw new Error("Network error: " + response.statusText);
+                Swal.fire({
+                    title : "An error occurred.",
+                    icon : "error"
+                });
             }
 
             displayTasks();
             hideAddTaskForm();
-            const data = await response.json(); 
-            console.log(data);
+
+            Swal.fire({
+                title : "Task created successfully.",
+                icon : "success"
+            });
         } catch (error) {
-            console.log(error);
+            Swal.fire({
+                title : "An error occurred.",
+                icon : "error"
+            });
         }
     });
 
     // Change Events
     const tasks_list = document.querySelector(".tasks-list");
-    tasks_list.addEventListener("change", (event) => {
+    tasks_list.addEventListener("change", async (event) => {
         switch(true){
             case event.target.matches(".task_status") : 
-                updateTaskStatus(event);
+                let data = await updateTaskStatus(event);
             break;
         }
     });
@@ -42,7 +52,17 @@ document.addEventListener("DOMContentLoaded", () => {
     tasks_list.addEventListener("click", (event) => {
         switch (true) {
             case event.target.matches(".delete-btn"):
-                deleteTask(event);
+                Swal.fire({
+                    title: "Are you sure you want to delete this task?",
+                    icon : "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Delete"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        deleteTask(event);
+                    }
+                });
+                
             break;
 
             case event.target.matches(".edit-btn"):
@@ -68,11 +88,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 let data = await updateTask(updatedField, method, uri);
+
+                if(data.data.error_message){
+                    Swal.fire({
+                        title : data.data.error_message,
+                        icon : "info"
+                    });
+                    return;
+                }
+
                 if (data.status === "success") {
+                    Swal.fire({
+                        title : "Task updated successfully.",
+                        icon : "success"
+                    });
                     displayTasks();
                 }
             } catch (error) {
-                console.log(error);
+                Swal.fire({
+                    title : "An error occurred.",
+                    icon : "error"
+                });
             }
         }
     });
@@ -96,11 +132,11 @@ async function deleteTask(event){
 
         return data;        
     } catch (error) {
-        console.log(error);
+        Swal.fire({
+            title : "An error occurred.",
+            icon : "error"
+        });
     }
-
-
-    console.log(task_id);
 }
 
 async function showEditForm(event){
@@ -129,7 +165,10 @@ async function updateTaskStatus(event){
 
         return data;
     } catch (error) {
-        console.log(error);
+        Swal.fire({
+            title : "An error occurred.",
+            icon : "error"
+        });
     }
 }
 
@@ -174,7 +213,10 @@ async function updateTask(updatedFields, method, uri){
 
         return data;
     } catch (error) {
-        console.log(error);
+        Swal.fire({
+            title : "An error occurred.",
+            icon : "error"
+        });
     }
 }
 
@@ -264,7 +306,10 @@ async function displayTasks(){
         taskCompletedElement.querySelector("h3").innerHTML = tasks.data.counts.completed;    
         taskPendingElement.querySelector("h3").innerHTML = tasks.data.counts.pending;    
     } catch (error) {
-        console.log(error);
+        Swal.fire({
+            title : "An error occurred.",
+            icon : "error"
+        });
     }
 }
 

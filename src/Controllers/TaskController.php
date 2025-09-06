@@ -161,7 +161,7 @@ class TaskController extends Controller {
         // Response
         $rowsAffected = $query->rowCount();
         if($rowsAffected === 0){
-            $this->sendErrorJsonResponse("No task was updated");
+            $this->sendErrorJsonResponse("No changes were made.", 200);
         }
         $this->sendJsonResponse(["task_id" => $task_id]);
     }
