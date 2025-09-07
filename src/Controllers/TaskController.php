@@ -68,7 +68,7 @@ class TaskController extends Controller {
     }
 
     public function store(Request $request){
-        $input_request = $request->all();
+        $input_request = json_decode($request->all()['raw'], true);
         $actual_request = array_filter($input_request, function ($key) {
             return in_array($key, self::MODIFIABLE_FIELDS);
         }, ARRAY_FILTER_USE_KEY);

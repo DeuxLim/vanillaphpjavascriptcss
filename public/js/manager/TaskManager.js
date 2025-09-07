@@ -1,4 +1,5 @@
 import TaskAPI from "../api/TaskAPI.js";
+import Task from "../model/Task.js";
 
 export default class TaskManager {
     constructor()
@@ -17,6 +18,16 @@ export default class TaskManager {
         if(response.status === "success"){
             this.tasks = response.data.tasks;
         }
+    }
+
+    async addTask(form)
+    {
+        const formData = Object.fromEntries(new FormData(form).entries());
+
+        // add validation here...
+        const taskData = formData;
+
+        await this.api.createTask(taskData);
     }
 
     getTasks()

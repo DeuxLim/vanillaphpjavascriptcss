@@ -28,6 +28,7 @@ export default class TaskUI {
     }
 
     async renderTasks(tasks){
+        this.tasksContainer.innerHTML = "";
         let taskCard = "";
         tasks.forEach((task) => {
             taskCard += `

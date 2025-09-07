@@ -24,7 +24,7 @@ export default class TaskApp {
         // Add Task Functionality
         this.ui.addTaskButton.addEventListener("click", () => this.ui.toggleElement(this.ui.addTaskFormContainer));
         this.ui.addTaskCancelBtn.addEventListener("click", () => this.ui.toggleElement(this.ui.addTaskFormContainer));
-        this.ui.addTaskForm.addEventListener("submit", (event) => this.handleAddTask(event));
+        this.ui.addTaskForm.addEventListener("submit", async (event) => await this.handleAddTask(event));
 
         // Task Card Functionality
         this.ui.tasksContainer.addEventListener("click", (event) => {
@@ -39,10 +39,14 @@ export default class TaskApp {
         });
     }
 
-    handleAddTask(event)
+    async handleAddTask(event)
     {
         event.preventDefault();
 
+        await this.taskManager.addTask(this.ui.addTaskForm);
 
+        await this.taskManager.loadTasks();
+        this.ui.addTaskCancelBtn.click();
+        this.ui.renderTasks(this.taskManager.getTasks());        
     }
 }
