@@ -28,7 +28,7 @@
             <!-- Dashboard Header -->
             <div class="dashboard-header">
                 <h2>My Tasks</h2>
-                <button class="add-task-btn" onclick="showAddTaskForm()">+ Add New Task</button>
+                <button class="add-task-btn" id="addTaskFormBtn">+ Add New Task</button>
             </div>
 
             <!-- Stats Cards -->
@@ -57,7 +57,7 @@
             </div>
 
             <!-- Add Task Form (Hidden by default) -->
-            <div class="add-task-form" id="addTaskForm" style="display: none;">
+            <div class="add-task-form hidden" id="addTaskForm">
                 <div class="form-wrapper">
                     <h3>Add New Task</h3>
                     <form action="/tasks" method="POST">
@@ -84,7 +84,7 @@
                         </div>
 
                         <div class="form-actions">
-                            <button type="button" class="cancel-btn" onclick="hideAddTaskForm()">Cancel</button>
+                            <button type="button" class="cancel-btn">Cancel</button>
                             <button type="submit" class="submit-btn">Add Task</button>
                         </div>
                     </form>
@@ -101,5 +101,6 @@
 
     <!-- Load your JS file -->
   <script src="/js/tasks.js" defer></script>
+  <script type="module" src="/js/bootstrap.js" defer></script>
 </body>
 </html>

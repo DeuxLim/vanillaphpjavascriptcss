@@ -280,6 +280,7 @@ body {
     font-size: 24px;
     font-weight: 600;
     margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
 }
 
 .tasks-list {
@@ -436,6 +437,10 @@ body {
 
 .delete-btn:hover {
     background: rgba(229, 62, 62, 0.1);
+}
+
+.hidden{
+    display: none;
 }
 
 /* Responsive Design */
