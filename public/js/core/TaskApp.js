@@ -22,14 +22,14 @@ export default class TaskApp {
     bindListeners()
     {
         // Add Task Functionality
-        this.ui.addTaskButton.addEventListener("click", () => this.ui.toggleElement(this.ui.addTaskForm));
-        this.ui.addTaskCancelBtn.addEventListener("click", () => this.ui.toggleElement(this.ui.addTaskForm));
+        this.ui.addTaskButton.addEventListener("click", () => this.ui.toggleElement(this.ui.addTaskFormContainer));
+        this.ui.addTaskCancelBtn.addEventListener("click", () => this.ui.toggleElement(this.ui.addTaskFormContainer));
+        this.ui.addTaskForm.addEventListener("submit", (event) => this.handleAddTask(event));
 
         // Task Card Functionality
         this.ui.tasksContainer.addEventListener("click", (event) => {
             const taskContainer = event.target.closest(".task-container");
             if (!taskContainer) return;
-            const taskId = taskContainer.dataset.id;
 
             switch(true){
                 case event.target.matches(".edit-btn, .cancel-btn") : 
@@ -37,5 +37,12 @@ export default class TaskApp {
                 break;
             }
         });
+    }
+
+    handleAddTask(event)
+    {
+        event.preventDefault();
+
+
     }
 }

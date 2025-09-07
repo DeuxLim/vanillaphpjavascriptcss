@@ -6,7 +6,8 @@ export default class TaskUI {
 
     getElements()
     {
-        this.addTaskForm = document.querySelector("#addTaskForm");
+        this.addTaskFormContainer = document.querySelector("#addTaskForm");
+        this.addTaskForm = document.querySelector("#addTaskForm form");
         this.addTaskButton = document.querySelector("#addTaskFormBtn");
         this.addTaskCancelBtn = document.querySelector("#addTaskForm .cancel-btn");
         this.tasksContainer = document.querySelector('.tasks-list');
