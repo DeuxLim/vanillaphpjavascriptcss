@@ -233,7 +233,7 @@ class TaskController extends Controller {
     }
 
     public function destroy(Request $request){
-        $task_deleted = json_decode($request->all()["raw"], true)['fields']['task_deleted'];
+        $task_deleted = json_decode($request->all()["raw"], true)['task_deleted'];
         $task_id = $this->getTaskIdFromParams($request);
 
         // Delete task

@@ -30,11 +30,16 @@ export default class TaskAPI {
 
     async getTasks()
     {
-        return this.request("/tasks");
+        return await this.request("/tasks");
     }
 
     async createTask(data)
     {
-        return this.request("/tasks", "POST", data);
+        return await this.request("/tasks", "POST", data);
+    }
+
+    async deleteTask(taskId, updatedField)
+    {
+        return await this.request(`/tasks/${taskId}`, "DELETE", updatedField);
     }
 }

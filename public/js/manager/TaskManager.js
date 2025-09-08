@@ -30,6 +30,13 @@ export default class TaskManager {
         await this.api.createTask(taskData);
     }
 
+    async deleteTask(taskId)
+    {
+        this.tasks = this.tasks.filter(task => task.task_id !== Number(taskId));
+        
+        await this.api.deleteTask(taskId, { task_deleted : 1 });
+    }
+
     getTasks()
     {
         return this.tasks;

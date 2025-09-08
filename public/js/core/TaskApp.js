@@ -28,12 +28,16 @@ export default class TaskApp {
 
         // Task Card Functionality
         this.ui.tasksContainer.addEventListener("click", (event) => {
-            const taskContainer = event.target.closest(".task-container");
-            if (!taskContainer) return;
+            const taskCard = event.target.closest(".task-container");
+            if (!taskCard) return;
 
             switch(true){
                 case event.target.matches(".edit-btn, .cancel-btn") : 
-                    this.ui.toggleTaskEditForm(taskContainer);
+                    this.ui.toggleTaskEditForm(taskCard);
+                break;
+
+                case event.target.matches(".delete-btn") : 
+                    this.handleDeleteTask(taskCard);
                 break;
             }
         });
@@ -48,5 +52,11 @@ export default class TaskApp {
         await this.taskManager.loadTasks();
         this.ui.addTaskCancelBtn.click();
         this.ui.renderTasks(this.taskManager.getTasks());        
+    }
+
+    async handleDeleteTask(taskCard)
+    {
+        this.taskManager.deleteTask(taskCard.dataset.id);
+        this.ui.renderTasks(this.taskManager.getTasks());
     }
 }
