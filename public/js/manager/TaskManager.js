@@ -30,6 +30,14 @@ export default class TaskManager {
         await this.api.createTask(taskData);
     }
 
+    async editTask(taskId, data){
+        this.tasks = this.tasks.map((task) => {
+            return task.task_id == Number(taskId) ? { ...task, ...data } : task;
+        });
+
+        await this.api.updateTask(taskId, data);   
+    }
+
     async deleteTask(taskId)
     {
         this.tasks = this.tasks.filter(task => task.task_id !== Number(taskId));

@@ -38,8 +38,13 @@ export default class TaskAPI {
         return await this.request("/tasks", "POST", data);
     }
 
-    async deleteTask(taskId, updatedField)
+    async updateTask(taskId, data)
     {
-        return await this.request(`/tasks/${taskId}`, "DELETE", updatedField);
+        return await this.request(`/tasks/${taskId}`, "PATCH", data);
+    }
+
+    async deleteTask(taskId, data)
+    {
+        return await this.request(`/tasks/${taskId}`, "DELETE", data);
     }
 }

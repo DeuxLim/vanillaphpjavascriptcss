@@ -35,8 +35,8 @@ export default class TaskUI {
                 <div class="task-container" data-id="${task.task_id}">
                     <div class="task-item ${task.task_completed ? "completed" : ""}" id="task-item-${task.task_id}">
                         <div class="task-checkbox">
-                            <input class="task_status" type="checkbox" data-id="${task.task_id}" id="task_status_${task.task_id}" ${task.task_completed ? "checked" : ""}/>
-                            <label for="task_status_${task.task_id}"></label>
+                            <input class="task_status" type="checkbox" data-id="${task.task_id}" id="task_status" ${task.task_completed ? "checked" : ""}/>
+                            <label for="task_status"></label>
                         </div>
                         <div class="task-content">
                             <h4>${task.task_title}</h4>

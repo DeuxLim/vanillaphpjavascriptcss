@@ -39,6 +39,10 @@ export default class TaskApp {
                 case event.target.matches(".delete-btn") : 
                     this.handleDeleteTask(taskCard);
                 break;
+
+                case event.target.matches(".task_status") : 
+                    this.handleUpdateTask(taskCard, { task_completed : event.target.checked ? 1 : 0 });
+                break;
             }
         });
     }
@@ -57,6 +61,12 @@ export default class TaskApp {
     async handleDeleteTask(taskCard)
     {
         this.taskManager.deleteTask(taskCard.dataset.id);
+        this.ui.renderTasks(this.taskManager.getTasks());
+    }
+
+    async handleUpdateTask(taskCard, data)
+    {
+        await this.taskManager.editTask(taskCard.dataset.id, data);
         this.ui.renderTasks(this.taskManager.getTasks());
     }
 }

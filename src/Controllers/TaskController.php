@@ -132,7 +132,7 @@ class TaskController extends Controller {
 
     public function update(Request $request){
         try{
-            $updated_fields = json_decode($request->all()["raw"], true)['fields'];
+            $updated_fields = json_decode($request->all()["raw"], true);
             $updated_fields = array_map('trim', $updated_fields);
             $task_id = $this->getTaskIdFromParams($request);
             $errors = [];
