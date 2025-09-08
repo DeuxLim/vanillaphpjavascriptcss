@@ -56,7 +56,7 @@ export default class TaskUI {
                     <div class="edit-task-form task_${task.task_id} task-edit-form hidden">
                         <div class="form-wrapper">
                             <h3>Edit Task</h3>
-                            <form data-id="${task.task_id}">
+                            <form class="editTaskForm" data-id="${task.task_id}">
                                 <div class="form-group">
                                     <label>Task Title</label>
                                     <input type="text" name="task_title" value="${task.task_title}" required />

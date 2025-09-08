@@ -45,6 +45,21 @@ export default class TaskApp {
                 break;
             }
         });
+
+        // Task Card Edit Form
+        this.ui.tasksContainer.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const taskCard = event.target.closest(".task-container");
+            if (!taskCard) return;
+
+            switch(true){
+                case event.target.matches(".editTaskForm") : 
+                    let editFormData = new FormData(event.target);
+                    let updatedField = Object.fromEntries(editFormData.entries());
+                    this.handleUpdateTask(taskCard, updatedField);
+                break;
+            }
+        });
     }
 
     async handleAddTask(event)
