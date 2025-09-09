@@ -57,8 +57,13 @@ export default class TaskApp {
             switch(true){
                 case event.target.matches(".editTaskForm") : 
                     let editFormData = new FormData(event.target);
-                    let updatedField = Object.fromEntries(editFormData.entries());
-                    this.handleUpdateTask(taskCard, updatedField);
+                    let updatedFields = Object.fromEntries(editFormData);
+                    
+                    if (updatedFields.task_due) {
+                        updatedFields.task_due = updatedFields.task_due.replace("T", " ") + ":00";
+                    }                    
+                    
+                    this.handleUpdateTask(taskCard, updatedFields);
                 break;
             }
         });
