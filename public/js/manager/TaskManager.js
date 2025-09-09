@@ -24,10 +24,7 @@ export default class TaskManager {
     {
         const formData = Object.fromEntries(new FormData(form).entries());
 
-        // add validation here...
-        const taskData = formData;
-
-        await this.api.createTask(taskData);
+        await this.api.createTask(formData);
     }
 
     async editTask(taskId, data){
