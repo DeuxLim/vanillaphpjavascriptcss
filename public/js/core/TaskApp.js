@@ -1,12 +1,10 @@
 import TaskAPI from "../api/TaskAPI.js";
 import TaskManager from "../manager/TaskManager.js";
-import Task from "../model/Task.js";
 import TaskUI from "../ui/TaskUI.js";
 
 export default class TaskApp {
     constructor()
     {
-        this.task = new Task;
         this.taskManager = new TaskManager;
         this.ui = new TaskUI;
         this.api = new TaskAPI;

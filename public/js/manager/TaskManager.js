@@ -1,5 +1,4 @@
 import TaskAPI from "../api/TaskAPI.js";
-import Task from "../model/Task.js";
 
 export default class TaskManager {
     constructor()
