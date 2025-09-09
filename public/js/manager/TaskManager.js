@@ -44,6 +44,22 @@ export default class TaskManager {
 
     getTasks()
     {
-        return this.tasks;
+        this.updateCounts();
+        return { tasks : this.tasks, counts : this.getCounts() }
+    }
+
+    updateCounts() {
+        this.total = this.tasks.length;
+        this.pending = this.tasks.filter(task => task.task_completed !== 1).length;
+        this.completed = this.tasks.filter(task => task.task_completed === 1).length;
+    }
+
+    getCounts()
+    {
+        return {
+            total : this.total,
+            pending : this.pending,
+            completed : this.completed
+        }
     }
 }

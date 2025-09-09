@@ -77,18 +77,21 @@ export default class TaskApp {
 
         await this.taskManager.loadTasks();
         this.ui.addTaskCancelBtn.click();
-        this.ui.renderTasks(this.taskManager.getTasks());        
+        this.ui.renderTasks(this.taskManager.getTasks()); 
+        this.ui.updateCounts(this.taskManager.getCounts());       
     }
 
     async handleDeleteTask(taskCard)
     {
         this.taskManager.deleteTask(taskCard.dataset.id);
         this.ui.renderTasks(this.taskManager.getTasks());
+        this.ui.updateCounts(this.taskManager.getCounts());       
     }
 
     async handleUpdateTask(taskCard, data)
     {
         await this.taskManager.editTask(taskCard.dataset.id, data);
         this.ui.renderTasks(this.taskManager.getTasks());
+        this.ui.updateCounts(this.taskManager.getCounts());       
     }
 }

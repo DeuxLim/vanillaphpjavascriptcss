@@ -11,6 +11,9 @@ export default class TaskUI {
         this.addTaskButton = document.querySelector("#addTaskFormBtn");
         this.addTaskCancelBtn = document.querySelector("#addTaskForm .cancel-btn");
         this.tasksContainer = document.querySelector('.tasks-list');
+        this.total = document.querySelector(".stat-info.total h3");
+        this.pending = document.querySelector(".stat-info.pending h3");
+        this.completed = document.querySelector(".stat-info.completed h3");
     }
 
     toggleElement(element, change = "hidden") 
@@ -27,10 +30,10 @@ export default class TaskUI {
         this.toggleElement(taskCard);
     }
 
-    async renderTasks(tasks){
+    async renderTasks(data){
         this.tasksContainer.innerHTML = "";
         let taskCard = "";
-        tasks.forEach((task) => {
+        data.tasks.forEach((task) => {
             taskCard += `
                 <div class="task-container" data-id="${task.task_id}">
                     <div class="task-item ${task.task_completed ? "completed" : ""}" id="task-item-${task.task_id}">
@@ -89,5 +92,16 @@ export default class TaskUI {
         });
 
         this.tasksContainer.innerHTML += taskCard;
+
+        this.total.innerHTML = data.counts.total;
+        this.pending.innerHTML = data.counts.pending;
+        this.completed.innerHTML = data.counts.completed;
+    }
+
+    updateCounts(counts)
+    {
+        this.total.innerHTML = counts.total ?? 0;
+        this.pending.innerHTML = counts.pending ?? 0;
+        this.completed.innerHTML = counts.completed ?? 0;
     }
 }
