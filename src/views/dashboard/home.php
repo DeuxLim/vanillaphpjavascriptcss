@@ -100,7 +100,6 @@
     </main>
 
     <!-- Load your JS file -->
-  <script src="/js/tasks.js" defer></script>
   <script type="module" src="/js/bootstrap.js" defer></script>
 </body>
 </html>
