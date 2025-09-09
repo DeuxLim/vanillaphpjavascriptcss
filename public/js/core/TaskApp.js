@@ -41,7 +41,9 @@ export default class TaskApp {
                 break;
 
                 case event.target.matches(".task_status") : 
-                    this.handleUpdateTask(taskCard, { task_completed : event.target.checked ? 1 : 0 });
+                    const now = new Date();
+                    const formattedDate = now.toISOString().slice(0, 19).replace("T", " ");
+                    this.handleUpdateTask(taskCard, { task_completed : event.target.checked ? 1 : 0, task_completed_date : formattedDate});
                 break;
             }
         });

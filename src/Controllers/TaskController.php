@@ -22,7 +22,8 @@ class TaskController extends Controller {
         "task_priority",
         "task_due",
         "task_completed",
-        "task_deleted"
+        "task_deleted",
+        "task_completed_date"
     ];
 
     protected const VALID_TASK_PRIORITIES = [
