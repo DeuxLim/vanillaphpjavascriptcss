@@ -10,7 +10,7 @@
     <div class="container">
         <div class="form-wrapper">
             <div class="form-header">
-                <h1>TaskFlow</h1>
+                <a href="/"><h1>TaskFlow</h1></a>
                 <p>Sign in to access your todo list</p>
             </div>
             

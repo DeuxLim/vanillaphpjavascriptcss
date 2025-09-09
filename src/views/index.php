@@ -16,8 +16,12 @@
             <div class="nav-menu">
                 <a href="#features" class="nav-link">Features</a>
                 <a href="#about" class="nav-link">About</a>
-                <a href="/login" class="nav-btn login-btn">Login</a>
-                <a href="/register" class="nav-btn signup-btn">Sign Up</a>
+                <?php if (!isset($_SESSION['user_id'])) : ?>
+                    <a href="/login" class="nav-btn login-btn">Login</a>
+                    <a href="/register" class="nav-btn signup-btn">Sign Up</a>
+                <?php else : ?>
+                    <a href="/dashboard" class="nav-btn signup-btn">Dashboard</a>
+                <?php endif; ?>
             </div>
             <div class="hamburger">
                 <span></span>
